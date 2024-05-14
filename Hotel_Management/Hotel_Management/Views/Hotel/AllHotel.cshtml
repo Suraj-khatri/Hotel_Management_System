@@ -1,0 +1,33 @@
+﻿
+@model List<Hotel_Management.Models.Hotel>
+
+
+
+
+
+<div class="py-5 bg-light">
+    <h3 class="h3">All Hotels</h3>
+    @if (Model == null || !Model.Any())
+    {
+        <p>No Hotels Were Found</p>
+    }
+    <div class="row">
+        @foreach(var hotel in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <img src="@hotel.PhotoUrl" class="card-img-top" width="225" height="225">
+                    <div class="card-body">
+                        <h3 class="card-title">@hotel.Name</h3>
+                        <p class="card-text">@hotel.Address</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="/Hotel/Edit/@hotel.Id" class="btn btn-outline-secondary btn-sm">Edit Details</a>
+                            </div>
+                            <small class="text-muted">@hotel.Email</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>

@@ -1,0 +1,97 @@
+﻿@model Hotel_Management.DTO.AddHotelDTO
+
+<h2>Add Hotel</h2>
+<form id="addHotelForm" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Photo" class="custom-control-label"></label>
+        <input type="file" class="form-control" asp-for="Photo" id="formFile">
+        <span asp-validation-for="Photo" class="text-danger"></span>
+    </div>
+    <div id="errorSummary" class="alert alert-danger" style="display:none;"></div> <!-- Error summary container -->
+
+    <div class="form-group">
+        <input type="submit" id="submitButton" value="Add Hotel" class="btn btn-primary" /> <!-- Add ID attribute -->
+    </div>
+</form>
+
+@section scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Disable submit button initially
+            $('#submitButton').prop('disabled', true);
+
+            // Intercept the form submission
+            $('#addHotelForm').submit(function (e) {
+                // Prevent the default form submission
+                e.preventDefault();
+
+                // Perform client-side validation using jQuery Validation plugin
+                if ($(this).valid()) {
+                    // Create FormData object to handle file upload
+                    var formData = new FormData(this);
+
+                    // Send the form data using AJAX
+                    $.ajax({
+                        url: '/Hotel/Add', // Update the URL to match your controller action
+                        type: 'POST',
+                        data: formData,
+                        contentType: false, // Set contentType to false when using FormData
+                        processData: false, // Set processData to false when using FormData
+                        success: function (response) {
+                            // Handle the success response from the server
+                            // For example, display a success message or redirect to another page
+                            alert("Hotel added successfully!");
+                            window.location.href = '/Hotel/AllHotel'; // Redirect to the index page
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle any errors from the server
+                            // For example, display an error message to the user
+                            var errors = xhr.responseJSON;
+                            if (errors) {
+                                // Display validation errors
+                                var errorSummary = $('#errorSummary');
+                                errorSummary.empty();
+                                errorSummary.show();
+                                $.each(errors, function (key, value) {
+                                    errorSummary.append('<p>' + value + '</p>');
+                                });
+                            } else {
+                                alert("Failed to add hotel: " + error);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Enable or disable submit button based on form validity
+            $('#addHotelForm input').on('input', function () {
+                if ($('#addHotelForm').valid()) {
+                    $('#submitButton').prop('disabled', false);
+                } else {
+                    $('#submitButton').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+}
